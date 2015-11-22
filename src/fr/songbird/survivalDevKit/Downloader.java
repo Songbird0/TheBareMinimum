@@ -13,27 +13,43 @@ import net.wytrem.logging.LogLevel;
 
 /**
  * The downloader class allows the download any file.
- * @version 0.4_2-ALPHA
+ * @version 0.4_2-BETA
  * @author songbird
- * @since TBM-0.6_2-ALPHA
+ * @since TBM-0.7_0-ALPHA
  */
 public class Downloader{
+	
+	//###### PRIVATE VARIABLES ######
+	
+	
 	private static final BasicLogger logger = LoggerFactory.getLogger(Downloader.class);
 	private String definitivePath;
 	private String[] repositories = null;
-    String fnw = null;
-  public Downloader(String url, String fileNameWrited, String[] repositories){
+	private URL racine = null;
+    private String fnw = null;
+    
+    //###### PUBLIC VARIABLES ######
+    
+    
+    
+    //###### CONSTRUCTOR ######
+    
+    
+  public Downloader(String url, String fileNameWritten, String[] repositories){
 	  this.repositories = repositories;
       try{
-        fnw = fileNameWrited;
-        URL racine = new URL(url);
+        fnw = fileNameWritten;
+        racine = new URL(url);
         getFile(racine);
       }catch(MalformedURLException exception5){
         exception5.printStackTrace();
       }
   }
 
-  public void getFile(URL u){
+  //###### PRIVATE METHODS ######
+  
+  
+  private void getFile(URL u){
 	  	String pathf = null;
         FileOutputStream WritenFile = null;
         InputStream in = null;
@@ -42,16 +58,15 @@ public class Downloader{
         pathf = null;
         File pathdef = null;
     try{
+    	logger.log(LogLevel.INFO, "Connexion...");
 	    urlc = u.openConnection();
-	    logger.log(LogLevel.INFO, "Connexion...");
-	    in = urlc.getInputStream();
 	    logger.log(LogLevel.INFO, "Ouverture d'un flux en entree...");
+	    in = urlc.getInputStream();
 	    FileName = u.getFile();
 	    logger.log(LogLevel.DEBUG, "Nom du fichier: "+FileName);
 	    FileName = FileName.substring(FileName.lastIndexOf('/')+1);
 	    logger.log(LogLevel.DEBUG, FileName);
 	    pathf = new String(System.getProperty("user.home")+File.separator);
-	    //+".PasswordGenerator"+File.separator+"Informations"+File.separator
 	    for(int i = 0x0; i<repositories.length; i++){
 	    	pathf += repositories[i]+File.separator;
 	    }
@@ -90,12 +105,39 @@ public class Downloader{
 		  this.definitivePath = path;
   }
   
+  
+  //###### PUBLIC METHODS ######
+  
+  /**
+   * 
+   * @return get definitive path
+   */
   public String getDefinitivePath(){
 	  return this.definitivePath;
   }
+  /**
+   * 
+   * @return get file name written 
+   */
   public String getFNW(){
 	  return this.fnw;
   }
+  
+  /**
+   * Builds and returns the path in String.
+   * @param path
+   * @param repositories
+   * @return the path.
+   */
+  public static String buildOnlyPath(String path, String[] repositories){
+	  for(int i = 0x0; i<repositories.length; i++){
+		  path += repositories[i]+File.separator;
+	  }
+	  new File(path).mkdirs();
+	  return path;
+  }
+  
+  
  
  
 }
