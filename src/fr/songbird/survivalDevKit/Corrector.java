@@ -7,7 +7,7 @@ import net.wytrem.logging.*;
  * I'm happy to present you my primitive Corrector !
  * He can to correct words that your file contains ! (he's not case sensitive currently)
  * @author songbird
- * @version 0.1_0-ALPHA
+ * @version 0.2_0-ALPHA
  *
  */
 public class Corrector {
@@ -28,8 +28,10 @@ public class Corrector {
 	
 	//###### CONSTRUCTOR ######
 	
-	public Corrector(){
-		
+	public Corrector(String fileName){
+		File directories = new File(fileDirectory);
+		directories.mkdirs();
+		orthographyFile = new File(fileDirectory+fileName);
 	}
 	
 	//###### PRIVATE METHODS ######
@@ -76,21 +78,31 @@ public class Corrector {
 	
 	public void readOrthographyFile(File orthographyFile, String word){
 		BufferedReader buff = null;
-		try{
-			buff = new BufferedReader(new InputStreamReader(new FileInputStream(orthographyFile)));
-			while((pertinentWord = buff.readLine()) != null){
-				searchAndGetCoherentSetKeyValue(pertinentWord.toCharArray(), word.toCharArray());
+		if(orthographyFile.exists()){
+			try{
+				buff = new BufferedReader(new InputStreamReader(new FileInputStream(orthographyFile)));
+				while((pertinentWord = buff.readLine()) != null){
+					searchAndGetCoherentSetKeyValue(pertinentWord.toCharArray(), word.toCharArray());
+				}
+			}catch(IOException ioexception0){
+				ioexception0.printStackTrace();
+			}catch(Exception exception1){
+				exception1.printStackTrace();
 			}
-		}catch(IOException ioexception0){
-			ioexception0.printStackTrace();
-		}catch(Exception exception1){
-			exception1.printStackTrace();
+			finally{
+				try {
+					buff.close();
+				} catch (IOException exception2) {
+					exception2.printStackTrace();
+				}
+			}
 		}
-		finally{
+		else{
 			try {
-				buff.close();
-			} catch (IOException exception2) {
-				exception2.printStackTrace();
+				logger.warning("Le fichier d'orthographe n'est pas present !\nUn fichier vide a ete cree, veuillez le completer !");
+				orthographyFile.createNewFile();
+			} catch (IOException exception3) {
+				exception3.printStackTrace();
 			}
 		}
 	}

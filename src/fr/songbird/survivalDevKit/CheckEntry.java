@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * A Java class allowing a complete check on the entry
  * She can generates "Checking pattern" without use regexp for user.
  * @author songbird
- * @version 0.7_1-ALPHA (majorRevision.MinorRevision_bugs-developmentPhase)
+ * @version 0.8_1-ALPHA (majorRevision.MinorRevision_bugs-developmentPhase)
  * @since TBM-0.3_0-ALPHA
  */
 public class CheckEntry {
@@ -207,12 +207,5 @@ public class CheckEntry {
 	      
 	    }
 	    return occurrenceTab[occurrenceTab.length-1];
-	}
-
-	
-	public static void main(String[] args){
-		CheckEntry ck = new CheckEntry();
-		
-	    System.out.println("Est-il apte a etre suggere ?"+ck.capableToBeSuggested(new String("Camille").toCharArray(), new String("Cuisine").toCharArray()));
 	}
 }
