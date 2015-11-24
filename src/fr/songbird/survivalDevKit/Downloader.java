@@ -13,7 +13,7 @@ import net.wytrem.logging.LogLevel;
 
 /**
  * The downloader class allows the download any file.
- * @version 0.4_2-BETA
+ * @version 1.0_2-BETA
  * @author songbird
  * @since TBM-0.7_0-ALPHA
  */
@@ -23,10 +23,16 @@ public class Downloader{
 	
 	
 	private static final BasicLogger logger = LoggerFactory.getLogger(Downloader.class);
-	private String definitivePath;
-	private String[] repositories = null;
 	private URL racine = null;
     private String fnw = null;
+    private InputStream in = null;
+    URLConnection urlcFile = null;
+    private byte[] buffer = new byte[1024];
+    private long fileSize = 0L;
+    private FileOutputStream fileToWrite;
+    private String pathDef = null;
+    private int reading = 0; 
+    private File fileDownloaded = null;
     
     //###### PUBLIC VARIABLES ######
     
@@ -36,85 +42,74 @@ public class Downloader{
     
     
   public Downloader(String url, String fileNameWritten, String[] repositories){
-	  this.repositories = repositories;
+      fnw = fileNameWritten;
+	  pathDef = Downloader.buildOnlyPath(new String(System.getProperty("user.home"))+File.separator, repositories);
+      fileDownloaded = new File(pathDef+fnw);
+	  logger.log(LogLevel.INFO, "Construction du chemin "+pathDef+"\nFait.");
+	  logger.log(LogLevel.INFO, "Creation du fichier "+fnw);
+	  try {
+		fileDownloaded.createNewFile();
+	  } catch (IOException exception2) {
+		exception2.printStackTrace();
+	  }
+	  try {
+		fileToWrite = new FileOutputStream(fileDownloaded);
+	  } catch (FileNotFoundException exception0) {
+		exception0.printStackTrace();
+	  }
       try{
-        fnw = fileNameWritten;
         racine = new URL(url);
         getFile(racine);
-      }catch(MalformedURLException exception5){
-        exception5.printStackTrace();
+      }catch(MalformedURLException exception1){
+        exception1.printStackTrace();
       }
   }
 
   //###### PRIVATE METHODS ######
   
   
-  private void getFile(URL u){
-	  	String pathf = null;
-        FileOutputStream WritenFile = null;
-        InputStream in = null;
-        URLConnection urlc = null;
-        String FileName = null;
-        pathf = null;
-        File pathdef = null;
-    try{
-    	logger.log(LogLevel.INFO, "Connexion...");
-	    urlc = u.openConnection();
-	    logger.log(LogLevel.INFO, "Ouverture d'un flux en entree...");
-	    in = urlc.getInputStream();
-	    FileName = u.getFile();
-	    logger.log(LogLevel.DEBUG, "Nom du fichier: "+FileName);
-	    FileName = FileName.substring(FileName.lastIndexOf('/')+1);
-	    logger.log(LogLevel.DEBUG, FileName);
-	    pathf = new String(System.getProperty("user.home")+File.separator);
-	    for(int i = 0x0; i<repositories.length; i++){
-	    	pathf += repositories[i]+File.separator;
-	    }
-        try{
-        	pathdef = new File(pathf);
-        	setDefinitivePath(pathf);
-        	pathdef.mkdirs();
-        	new File(pathdef+File.separator+fnw).createNewFile();
-        	logger.log(LogLevel.INFO, "Chemin construit: "+pathdef);
-        	try{
-        		WritenFile = new FileOutputStream(pathdef+File.separator+fnw);
-        	}catch(FileNotFoundException exception6){
-        		exception6.printStackTrace();
-        	}
-		    logger.log(LogLevel.INFO, "Recuperation du fichier a ecrire: "+WritenFile);
-		    byte[] buff = new byte[1024];
-		    logger.log(LogLevel.INFO, "Declaration du tampon.");
-		    int BytesNumber = in.read(buff);
-		    logger.log(LogLevel.INFO, "Téléchargement...");
-		    while(BytesNumber>0){
-		      WritenFile.write(buff, 0, BytesNumber);
-		      BytesNumber = in.read(buff);
-		    }
-		    logger.log(LogLevel.INFO, "Fin téléchargement.");
-        }catch(IOException exception1){
-            exception1.toString();
-        }finally{WritenFile.flush(); WritenFile.close();}
-    }catch(Exception exception0){
-        exception0.printStackTrace();
-    }finally{
-    	try{in.close();}catch(IOException exception2){exception2.printStackTrace();}
-    }
-  }
-  
-  private final void setDefinitivePath(String path){
-		  this.definitivePath = path;
+  private void getFile(URL urlOfTheFile) {
+	  try{
+		  logger.log(LogLevel.INFO, "Tentative de connexion vers: "+urlOfTheFile+".");
+	      urlcFile = urlOfTheFile.openConnection();
+	  }catch(IOException ioexception0){
+		  ioexception0.printStackTrace();
+	  }
+	  fileSize = urlcFile.getContentLengthLong();
+	  logger.log(LogLevel.INFO, "Taille du fichier: "+fileSize+" octets.");
+	  try{
+		  in = urlcFile.getInputStream();
+	  }catch(IOException ioexception1){
+		  ioexception1.printStackTrace();
+	  }
+	  
+	  logger.log(LogLevel.INFO, "Téléchargement en cours...");
+	  
+	  try{
+		  while((reading = in.read(buffer)) > 0){
+			  logger.log(LogLevel.INFO, (fileSize -= reading)+" octets restants.");
+			  fileToWrite.write(buffer, 0, reading);
+		  }
+	  }catch(IOException ioexception2){
+		  ioexception2.printStackTrace();
+	  }finally{
+		  try{
+			  fileToWrite.flush();
+			  fileToWrite.close();
+			  in.close();
+		  }catch(IOException ioexception3){
+			  ioexception3.printStackTrace();
+		  }
+	  }
+	  
+	  
+	  
   }
   
   
   //###### PUBLIC METHODS ######
   
-  /**
-   * 
-   * @return get definitive path
-   */
-  public String getDefinitivePath(){
-	  return this.definitivePath;
-  }
+
   /**
    * 
    * @return get file name written 
@@ -129,15 +124,12 @@ public class Downloader{
    * @param repositories
    * @return the path.
    */
-  public static String buildOnlyPath(String path, String[] repositories){
+  public static String buildOnlyPath(String positionOfRepositories, String[] repositories){
 	  for(int i = 0x0; i<repositories.length; i++){
-		  path += repositories[i]+File.separator;
+		  positionOfRepositories += repositories[i]+File.separator;
 	  }
-	  new File(path).mkdirs();
-	  return path;
+	  new File(positionOfRepositories).mkdirs();
+	  return positionOfRepositories;
   }
-  
-  
- 
  
 }

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class CheckEntry {
 	
 	//###### PRIVATE VARIABLES ######
-	private static HashMap<Character, AtomicInteger> characterAsciiSet = new HashMap<Character, AtomicInteger>(); //Contiendra les caracteres et le nombre de fois 
+	private static HashMap<Character, AtomicInteger> characterAsciiSet = new HashMap<Character, AtomicInteger>(); 
 	private byte occurrenceNumberInt = 0x0;
 	private byte occurrenceNumberLowerCase = 0x0;
 	private byte occurrenceNumberUpperCase = 0x0;
@@ -24,7 +24,7 @@ public class CheckEntry {
 	private CheckInt checker = null;
 	private Pattern foundLowerCase = Pattern.compile("[a-z]");
 	private Pattern foundUpperCase = Pattern.compile("[A-Z]");
-	private ArrayList<Integer> asciiCode = new ArrayList<Integer>(); //On recupere toutes les lettres a partir de leur code ascii
+	private ArrayList<Integer> asciiCode = new ArrayList<Integer>(); 
 	
 	//###### PUBLIC VARIABLES ######
 	
@@ -109,13 +109,13 @@ public class CheckEntry {
 	public void analyzeAndCountOccurrenceLetter(char[] word){
 		for(char caract : word){
 			if(heIsAlreadyPresent(caract)){
-				System.out.println("Repetition de "+caract);
+				//System.out.println("Repetition de "+caract);
 				characterAsciiSet.get(caract).incrementAndGet();
 				continue;
 			}
 
 			asciiCode.add((int)caract);
-			System.out.println("Nouvelle lettre "+caract);
+			//System.out.println("Nouvelle lettre "+caract);
 			characterAsciiSet.put(caract, new AtomicInteger(0x1));
 		}	
 	}
