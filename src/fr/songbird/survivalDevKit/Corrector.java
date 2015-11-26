@@ -7,7 +7,7 @@ import net.wytrem.logging.*;
  * I'm happy to present you my primitive Corrector !
  * He can to correct words that your file contains ! (he's not case sensitive currently)
  * @author songbird
- * @version 0.2_0-ALPHA
+ * @version 0.3_0-ALPHA
  *
  */
 public class Corrector {
@@ -20,7 +20,11 @@ public class Corrector {
 	private File orthographyFile = null;
 	private String pertinentWord = null;
 	private String fileDirectory = null;
-	
+	private CheckEntry checkWOTF = new CheckEntry();
+	private CheckEntry checkIKB = new CheckEntry();
+    private String inputKeyBoard = null;
+	private int dominantOccurrenceLetterWOTF = 0;
+	private int dominantOccurrenceLetterIKB = 0; 
 	
 	//###### PUBLIC VARIABLES ######
 	
@@ -36,19 +40,36 @@ public class Corrector {
 	
 	//###### PRIVATE METHODS ######
 
+	private void setDominantOccurrenceLetterWOTF(int DOLW){
+		this.dominantOccurrenceLetterWOTF = DOLW;
+	}
+	
+	private void setDominantOccurrenceLetterIKB(int DOLI){
+		this.dominantOccurrenceLetterIKB = DOLI;
+	}
 	
 	private void searchCoherentSetKeyValue(char[] wordOfTheFile, char[] inputKeyBoard){ //Cette methode renverra une chaine de caractere (le mot suggere)
-		CheckEntry checkWOTF = new CheckEntry();
-		CheckEntry checkIKB = new CheckEntry();
-		if(checkWOTF.capableToBeSuggested(wordOfTheFile, inputKeyBoard) 
-				&& checkWOTF.getOccurrenceDominantLetter(wordOfTheFile) == checkIKB.getOccurrenceDominantLetter(inputKeyBoard)){
-			if(identicalDominantLetter(wordOfTheFile, inputKeyBoard, checkWOTF.getOccurrenceDominantLetter(wordOfTheFile),
-					checkIKB.getOccurrenceDominantLetter(inputKeyBoard),
-					checkWOTF, checkIKB)){
-				System.out.println("L'occurrence dominante de IKB est egale a: "+checkIKB.getOccurrenceDominantLetter(inputKeyBoard)+"\n l'occurrence dominante de WOTF est egale a: "+checkWOTF.getOccurrenceDominantLetter(wordOfTheFile));
-				Runtime.getRuntime().exit(0);
+		this.pertinentWord = new String(wordOfTheFile);
+		this.inputKeyBoard = new String(inputKeyBoard);
+		int dominantOccurrenceLetterWOTF = checkWOTF.getOccurrenceDominantLetter(pertinentWord.toCharArray());
+		setDominantOccurrenceLetterWOTF(dominantOccurrenceLetterWOTF);
+		int dominantOccurrenceLetterIKB = checkIKB.getOccurrenceDominantLetter(this.inputKeyBoard.toCharArray());
+		setDominantOccurrenceLetterIKB(dominantOccurrenceLetterIKB);
+		
+		if(!areIdentical(pertinentWord, this.inputKeyBoard)){
+			if(checkWOTF.capableToBeSuggested(wordOfTheFile, inputKeyBoard) 
+					&& this.dominantOccurrenceLetterWOTF == this.dominantOccurrenceLetterIKB){
+				System.out.println("Capable to be suggested");
+				if(identicalDominantLetter(wordOfTheFile, inputKeyBoard, this.dominantOccurrenceLetterWOTF, this.dominantOccurrenceLetterIKB)){
+					System.out.println("Vous avez saisi le mot '"+this.inputKeyBoard+"' mais il ne semble pas correct.\nVous vouliez dire '"+this.pertinentWord+"' ?");
+				}
 			}
 		}
+		else{
+			System.out.println("Rien a suggerer, les deux mots sont identiques.");
+		}
+		
+		checkWOTF.getCurrentInstanceCharacterAsciiSet().clear();
 	}
 	
 
@@ -64,29 +85,28 @@ public class Corrector {
 	 * @return
 	 */
 	private boolean identicalDominantLetter(char[] WOTF, char[] IKB, int dominantOccurrenceLetterWOTF, //TODO A verifier, la methode est buguée !
-			int dominantOccurrenceLetterIKB,
-			CheckEntry instanceWOTF, CheckEntry instanceIKB){
-		
-		
-		
-		
-		
-		System.out.println("Occurrence dominante de WOTF: "+dominantOccurrenceLetterWOTF);
-		System.out.println("Occurrence dominante de IKB: "+dominantOccurrenceLetterIKB);
+			int dominantOccurrenceLetterIKB){
 		for(Character caract : WOTF){
-			if(instanceWOTF.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterWOTF){
+			if(checkWOTF.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterWOTF){
 				commonCharacterWOTF = caract;
 				System.out.println("[WOTF]: "+caract+" est la lettre dominante.");
 			}
+			else{
+				commonCharacterWOTF = 0;
+			}
 		}
 		for(Character caract : IKB){
-			if(instanceIKB.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterIKB){
+			if(checkIKB.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterIKB){
 				System.out.println("[IKB]: "+caract+" est la lettre dominante.");
 				commonCharacterIKB = caract;
+				break;
+			}
+			else{
+				commonCharacterIKB = 0;
 			}
 		}
 		
-		if(commonCharacterWOTF != 0 && commonCharacterIKB != 0){
+		if((commonCharacterWOTF != 0 && commonCharacterIKB != 0) && commonCharacterWOTF == commonCharacterIKB){
 			return true;
 		}
 		return false;
@@ -105,6 +125,7 @@ public class Corrector {
 				buff = new BufferedReader(new InputStreamReader(new FileInputStream(orthographyFile)));
 				while((pertinentWord = buff.readLine()) != null){
 					searchCoherentSetKeyValue(pertinentWord.toCharArray(), word.toCharArray());
+					System.out.println("tracker rearOrthographyFile");
 				}
 			}catch(IOException ioexception0){
 				ioexception0.printStackTrace();
@@ -163,5 +184,12 @@ public class Corrector {
 			}
 		}
 		return isFound;
+	}
+	
+	public static void main(String[] args){
+		Corrector corr = new Corrector(new String("ofFile"), new String[]{".Corrector", "OF"});
+		ScannerHM scan = new ScannerHM(System.in);
+		System.out.print("Saisissez un mot: ");
+		corr.readOrthographyFile(scan.ReadInputKeyboard());
 	}
 }

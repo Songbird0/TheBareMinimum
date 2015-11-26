@@ -1,6 +1,7 @@
 package fr.songbird.survivalDevKit;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -111,12 +112,14 @@ public class CheckEntry {
 			if(heIsAlreadyPresent(caract)){
 				//System.out.println("Repetition de "+caract);
 				characterAsciiSet.get(caract).incrementAndGet();
-				continue;
+				System.out.println(caract+":"+characterAsciiSet.get(caract));
 			}
-
-			asciiCode.add((int)caract);
-			//System.out.println("Nouvelle lettre "+caract);
-			characterAsciiSet.put(caract, new AtomicInteger(0x1));
+			else{
+				asciiCode.add((int)caract);
+				//System.out.println("Nouvelle lettre "+caract);
+				characterAsciiSet.put(caract, new AtomicInteger(0x1));
+			}
+			System.out.println("characterAsciiSet: "+characterAsciiSet);
 		}	
 	}
 	
@@ -175,6 +178,11 @@ public class CheckEntry {
 		return identical;
 	}
 	
+	public Collection<AtomicInteger> getValuesOfCharacterAsciiSet(){
+		return characterAsciiSet.values();
+	}
+	
+	
 	/**
 	 * 
 	 * @param word
@@ -206,6 +214,30 @@ public class CheckEntry {
 	       tabLength = tabLength-1;
 	      
 	    }
+	    System.out.println("OccurrenceTab: "+occurrenceTab);
 	    return occurrenceTab[occurrenceTab.length-1];
+	}
+	
+	public HashMap<Character, AtomicInteger> getCurrentInstanceCharacterAsciiSet(){
+		return characterAsciiSet;
+	}
+	
+	public static void main(String[] args){
+		/**
+		CheckEntry ck = new CheckEntry();
+		CheckEntry machin = new CheckEntry();
+		char[] cuisine = new String("Prout").toCharArray();
+		char[] cortana = new String("Cortana").toCharArray();
+		int dominantLetterMachin = machin.getOccurrenceDominantLetter(cuisine);
+		int dominantLetterCk = ck.getOccurrenceDominantLetter(cortana);
+		
+		if(cortana[0] == cuisine[0] && dominantLetterCk == dominantLetterMachin){
+			System.out.println("Les deux mots possedent le meme nombre d'occurrences concernant la lettre dominante et commence par la meme lettre, mais cette derniere n'est peut etre pas identique");
+		}
+		else{
+			System.out.println("Ils ne possedent meme pas le meme nombre d'occurrences, inutile d'essayer de suggerer le mot Cortana");
+		}*/
+	    CheckEntry ck = new CheckEntry();
+	    ck.analyzeAndCountOccurrenceLetter(new String("Cortana").toCharArray());
 	}
 }
