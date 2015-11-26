@@ -120,6 +120,7 @@ public class CheckEntry {
 				characterAsciiSet.put(caract, new AtomicInteger(0x1));
 			}
 			System.out.println("characterAsciiSet: "+characterAsciiSet);
+			characterAsciiSet.put('i', new AtomicInteger(6));
 		}	
 	}
 	

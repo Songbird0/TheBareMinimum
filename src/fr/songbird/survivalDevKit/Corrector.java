@@ -24,7 +24,8 @@ public class Corrector {
 	private CheckEntry checkIKB = new CheckEntry();
     private String inputKeyBoard = null;
 	private int dominantOccurrenceLetterWOTF = 0;
-	private int dominantOccurrenceLetterIKB = 0; 
+	private int dominantOccurrenceLetterIKB = 0;
+	private boolean stopResearch = false;
 	
 	//###### PUBLIC VARIABLES ######
 	
@@ -62,17 +63,20 @@ public class Corrector {
 				System.out.println("Capable to be suggested");
 				if(identicalDominantLetter(wordOfTheFile, inputKeyBoard, this.dominantOccurrenceLetterWOTF, this.dominantOccurrenceLetterIKB)){
 					System.out.println("Vous avez saisi le mot '"+this.inputKeyBoard+"' mais il ne semble pas correct.\nVous vouliez dire '"+this.pertinentWord+"' ?");
+					stopResearch = true;
 				}
 			}
 		}
 		else{
 			System.out.println("Rien a suggerer, les deux mots sont identiques.");
+			stopResearch = true;
 		}
 		
-		checkWOTF.getCurrentInstanceCharacterAsciiSet().clear();
 	}
 	
-
+    //TODO Petit rappel avant que je n'oublie !
+	//La table de hashage prend tous les mots à la suite des autres, ce qui fait grandir la Hashmap et deregle totalement le systeme !
+	//Il faut trouver un moyen pour qu'elle puisse prend un seul mot a la fois !
 	
 	/**
 	 * On cherche si le nombre d'occurrences identiques vaut aussi pour la lettre, les deux mots peuvent avoir autant d'occurrences, mais pas la meme lettre
@@ -99,12 +103,12 @@ public class Corrector {
 			if(checkIKB.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterIKB){
 				System.out.println("[IKB]: "+caract+" est la lettre dominante.");
 				commonCharacterIKB = caract;
-				break;
 			}
 			else{
 				commonCharacterIKB = 0;
 			}
 		}
+		
 		
 		if((commonCharacterWOTF != 0 && commonCharacterIKB != 0) && commonCharacterWOTF == commonCharacterIKB){
 			return true;
@@ -123,7 +127,7 @@ public class Corrector {
 		if(orthographyFile.exists()){
 			try{
 				buff = new BufferedReader(new InputStreamReader(new FileInputStream(orthographyFile)));
-				while((pertinentWord = buff.readLine()) != null){
+				while((pertinentWord = buff.readLine()) != null && stopResearch == false){
 					searchCoherentSetKeyValue(pertinentWord.toCharArray(), word.toCharArray());
 					System.out.println("tracker rearOrthographyFile");
 				}
