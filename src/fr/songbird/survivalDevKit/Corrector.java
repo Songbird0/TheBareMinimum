@@ -7,7 +7,7 @@ import net.wytrem.logging.*;
  * I'm happy to present you my primitive Corrector !
  * He can to correct words that your file contains ! (he's not case sensitive currently)
  * @author songbird
- * @version 0.3_0-ALPHA
+ * @version 0.4_2-ALPHA
  *
  */
 public class Corrector {
@@ -71,7 +71,6 @@ public class Corrector {
 			System.out.println("Rien a suggerer, les deux mots sont identiques.");
 			stopResearch = true;
 		}
-		
 	}
 	
     //TODO Petit rappel avant que je n'oublie !
@@ -130,6 +129,8 @@ public class Corrector {
 				while((pertinentWord = buff.readLine()) != null && stopResearch == false){
 					searchCoherentSetKeyValue(pertinentWord.toCharArray(), word.toCharArray());
 					System.out.println("tracker rearOrthographyFile");
+					checkWOTF.getCurrentInstanceCharacterAsciiSet().clear();
+					checkWOTF.getCurrentInstanceAsciiCode().clear();
 				}
 			}catch(IOException ioexception0){
 				ioexception0.printStackTrace();

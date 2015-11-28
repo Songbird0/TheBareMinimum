@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class CheckEntry {
 	
 	//###### PRIVATE VARIABLES ######
-	private static HashMap<Character, AtomicInteger> characterAsciiSet = new HashMap<Character, AtomicInteger>(); 
+	private HashMap<Character, AtomicInteger> characterAsciiSet = new HashMap<Character, AtomicInteger>(); 
 	private byte occurrenceNumberInt = 0x0;
 	private byte occurrenceNumberLowerCase = 0x0;
 	private byte occurrenceNumberUpperCase = 0x0;
@@ -120,7 +120,6 @@ public class CheckEntry {
 				characterAsciiSet.put(caract, new AtomicInteger(0x1));
 			}
 			System.out.println("characterAsciiSet: "+characterAsciiSet);
-			characterAsciiSet.put('i', new AtomicInteger(6));
 		}	
 	}
 	
@@ -221,6 +220,10 @@ public class CheckEntry {
 	
 	public HashMap<Character, AtomicInteger> getCurrentInstanceCharacterAsciiSet(){
 		return characterAsciiSet;
+	}
+	
+	public ArrayList<Integer> getCurrentInstanceAsciiCode(){
+		return asciiCode;
 	}
 	
 	public static void main(String[] args){
