@@ -60,7 +60,7 @@ public class Corrector {
 		if(!areIdentical(pertinentWord, this.inputKeyBoard)){
 			if(checkWOTF.capableToBeSuggested(wordOfTheFile, inputKeyBoard) 
 					&& this.dominantOccurrenceLetterWOTF == this.dominantOccurrenceLetterIKB){
-				System.out.println("Capable to be suggested");
+				//System.out.println("Capable to be suggested");
 				if(identicalDominantLetter(wordOfTheFile, inputKeyBoard, this.dominantOccurrenceLetterWOTF, this.dominantOccurrenceLetterIKB)){
 					System.out.println("Vous avez saisi le mot '"+this.inputKeyBoard+"' mais il ne semble pas correct.\nVous vouliez dire '"+this.pertinentWord+"' ?");
 					stopResearch = true;
@@ -73,10 +73,6 @@ public class Corrector {
 		}
 	}
 	
-    //TODO Petit rappel avant que je n'oublie !
-	//La table de hashage prend tous les mots à la suite des autres, ce qui fait grandir la Hashmap et deregle totalement le systeme !
-	//Il faut trouver un moyen pour qu'elle puisse prend un seul mot a la fois !
-	
 	/**
 	 * On cherche si le nombre d'occurrences identiques vaut aussi pour la lettre, les deux mots peuvent avoir autant d'occurrences, mais pas la meme lettre
 	 * @param WOTF
@@ -87,12 +83,12 @@ public class Corrector {
 	 * @param instanceIKB
 	 * @return
 	 */
-	private boolean identicalDominantLetter(char[] WOTF, char[] IKB, int dominantOccurrenceLetterWOTF, //TODO A verifier, la methode est buguée !
+	private boolean identicalDominantLetter(char[] WOTF, char[] IKB, int dominantOccurrenceLetterWOTF,
 			int dominantOccurrenceLetterIKB){
 		for(Character caract : WOTF){
 			if(checkWOTF.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterWOTF){
 				commonCharacterWOTF = caract;
-				System.out.println("[WOTF]: "+caract+" est la lettre dominante.");
+				//System.out.println("[WOTF]: "+caract+" est la lettre dominante.");
 			}
 			else{
 				commonCharacterWOTF = 0;
@@ -100,7 +96,7 @@ public class Corrector {
 		}
 		for(Character caract : IKB){
 			if(checkIKB.getCharacterAsciiSetKey(caract).get() == dominantOccurrenceLetterIKB){
-				System.out.println("[IKB]: "+caract+" est la lettre dominante.");
+				//System.out.println("[IKB]: "+caract+" est la lettre dominante.");
 				commonCharacterIKB = caract;
 			}
 			else{
@@ -128,7 +124,7 @@ public class Corrector {
 				buff = new BufferedReader(new InputStreamReader(new FileInputStream(orthographyFile)));
 				while((pertinentWord = buff.readLine()) != null && stopResearch == false){
 					searchCoherentSetKeyValue(pertinentWord.toCharArray(), word.toCharArray());
-					System.out.println("tracker rearOrthographyFile");
+					//System.out.println("tracker rearOrthographyFile");
 					checkWOTF.getCurrentInstanceCharacterAsciiSet().clear();
 					checkWOTF.getCurrentInstanceAsciiCode().clear();
 				}
@@ -189,12 +185,5 @@ public class Corrector {
 			}
 		}
 		return isFound;
-	}
-	
-	public static void main(String[] args){
-		Corrector corr = new Corrector(new String("ofFile"), new String[]{".Corrector", "OF"});
-		ScannerHM scan = new ScannerHM(System.in);
-		System.out.print("Saisissez un mot: ");
-		corr.readOrthographyFile(scan.ReadInputKeyboard());
 	}
 }

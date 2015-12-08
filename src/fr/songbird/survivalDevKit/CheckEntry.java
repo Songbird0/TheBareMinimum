@@ -112,14 +112,14 @@ public class CheckEntry {
 			if(heIsAlreadyPresent(caract)){
 				//System.out.println("Repetition de "+caract);
 				characterAsciiSet.get(caract).incrementAndGet();
-				System.out.println(caract+":"+characterAsciiSet.get(caract));
+				//System.out.println(caract+":"+characterAsciiSet.get(caract));
 			}
 			else{
 				asciiCode.add((int)caract);
 				//System.out.println("Nouvelle lettre "+caract);
 				characterAsciiSet.put(caract, new AtomicInteger(0x1));
 			}
-			System.out.println("characterAsciiSet: "+characterAsciiSet);
+			//System.out.println("characterAsciiSet: "+characterAsciiSet);
 		}	
 	}
 	
