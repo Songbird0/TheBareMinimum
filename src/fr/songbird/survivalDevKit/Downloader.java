@@ -13,7 +13,7 @@ import net.wytrem.logging.LogLevel;
 
 /**
  * The downloader class allows the download any file.
- * @version 1.0_2-BETA
+ * @version 1.1_2-BETA
  * @author songbird
  * @since TBM-0.7_0-ALPHA
  */
@@ -45,7 +45,7 @@ public class Downloader{
       fnw = fileNameWritten;
 	  pathDef = Downloader.buildOnlyPath(new String(System.getProperty("user.home"))+File.separator, repositories);
       fileDownloaded = new File(pathDef+fnw);
-	  logger.log(LogLevel.INFO, "Construction du chemin "+pathDef+"\nFait.");
+	  logger.log(LogLevel.INFO, "Construction du chemin "+pathDef);
 	  logger.log(LogLevel.INFO, "Creation du fichier "+fnw);
 	  try {
 		fileDownloaded.createNewFile();
@@ -68,10 +68,10 @@ public class Downloader{
   //###### PRIVATE METHODS ######
   
   
-  private void getFile(URL urlOfTheFile) {
+  private void getFile(URL fileUrl) {
 	  try{
-		  logger.log(LogLevel.INFO, "Tentative de connexion vers: "+urlOfTheFile+".");
-	      urlcFile = urlOfTheFile.openConnection();
+		  logger.log(LogLevel.INFO, "Tentative de connexion vers: "+fileUrl+".");
+	      urlcFile = fileUrl.openConnection();
 	  }catch(IOException ioexception0){
 		  ioexception0.printStackTrace();
 	  }

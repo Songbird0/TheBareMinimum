@@ -214,7 +214,6 @@ public class CheckEntry {
 	       tabLength = tabLength-1;
 	      
 	    }
-	    System.out.println("OccurrenceTab: "+occurrenceTab);
 	    return occurrenceTab[occurrenceTab.length-1];
 	}
 	
@@ -227,20 +226,6 @@ public class CheckEntry {
 	}
 	
 	public static void main(String[] args){
-		/**
-		CheckEntry ck = new CheckEntry();
-		CheckEntry machin = new CheckEntry();
-		char[] cuisine = new String("Prout").toCharArray();
-		char[] cortana = new String("Cortana").toCharArray();
-		int dominantLetterMachin = machin.getOccurrenceDominantLetter(cuisine);
-		int dominantLetterCk = ck.getOccurrenceDominantLetter(cortana);
-		
-		if(cortana[0] == cuisine[0] && dominantLetterCk == dominantLetterMachin){
-			System.out.println("Les deux mots possedent le meme nombre d'occurrences concernant la lettre dominante et commence par la meme lettre, mais cette derniere n'est peut etre pas identique");
-		}
-		else{
-			System.out.println("Ils ne possedent meme pas le meme nombre d'occurrences, inutile d'essayer de suggerer le mot Cortana");
-		}*/
 	    CheckEntry ck = new CheckEntry();
 	    ck.analyzeAndCountOccurrenceLetter(new String("Cortana").toCharArray());
 	}

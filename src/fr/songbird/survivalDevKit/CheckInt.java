@@ -58,19 +58,11 @@ public class CheckInt {
 	 */
 	public boolean isInt(String entryToCheck){
 		char[] entrySplitted = entryToCheck.toCharArray();
-		boolean isInt = true;
 		for(int i = 0; i<entrySplitted.length-1; i++){
 			if(!Character.isDigit(entrySplitted[i]) || Integer.parseInt(Character.toString(entrySplitted[i])) == 0){
-				isInt = false;
-				return isInt;
+				return false;
 			}
 		}
-		return isInt;
+		return true;
 	}
-	
-	/**
-	public void yolo(char caract, int entier){
-		boolean machin = caract==entier;
-		System.out.println(caract+" et "+entier+" se valent ? "+machin);
-	}*/
 }

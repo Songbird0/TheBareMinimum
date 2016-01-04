@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
  * 
  *	A Scanner class home made.
  * @author songbird
- * @version 0.1_0-ALPHA
+ * @version 0.2_0-ALPHA
  * @since TBM-0.1_0-ALPHA
  */
 public class ScannerHM {
@@ -23,9 +23,7 @@ public class ScannerHM {
 	 * @param inputstream
 	 */
 	public ScannerHM(InputStream inputstream){
-		if(inputstream.equals(System.in)){
-			reader = new BufferedReader(new InputStreamReader(inputstream));
-		}
+		reader = new BufferedReader(new InputStreamReader(inputstream));
 	}
 	
 	
