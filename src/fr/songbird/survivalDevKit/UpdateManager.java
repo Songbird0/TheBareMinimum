@@ -28,7 +28,12 @@ public class UpdateManager {
 	private String[] repositories_resources;
 	private String currentProgram_sum;
 	private boolean checksum;
-	private final File CLIENTPATHFOLDER_CLIENT = new File(getAppropriateUserHome(System.getProperty("os.name")));
+	private final String OS_NAME = System.getProperty("os.name");
+	private final File CLIENTPATHFOLDER_CLIENT = new File(getAppropriateUserHome(OS_NAME)+".Younicube");
+	private final File LAUNCHER_PATH_FOLDER = new File(
+			getAppropriateUserHome(OS_NAME+getAppropriateDesktop(OS_NAME))
+			);
+	
 	
 	/**
 	 * This constructor allows an update with a primitive system based on version number. 
@@ -171,13 +176,28 @@ public class UpdateManager {
 			{
 				return System.getProperty("user.home")+File.separator;
 			}
-			else
-			{
-				return System.getProperty("user.home")+File.separator;
-			}
 		}
 		
-		return "Your operating system are not found";
+		return System.getProperty("user.home")+File.separator;
+	}
+	
+	private String getAppropriateDesktop(final String OS)
+	{
+		final String OsUpperCase = (OS == null ? "nop" : OS.toUpperCase());
+		
+		if(OsUpperCase.contains("WIN"))
+		{
+			return "Desktop";
+		}
+		else if(OsUpperCase.contains("NUX"))
+		{
+			return "Bureau";
+		}
+		else
+		{
+			return "Desktop";
+		}
+		
 	}
 	
 	//###### PUBLIC METHODS ######

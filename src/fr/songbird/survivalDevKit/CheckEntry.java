@@ -110,16 +110,12 @@ public class CheckEntry {
 	public void analyzeAndCountOccurrenceLetter(char[] word){
 		for(char caract : word){
 			if(heIsAlreadyPresent(caract)){
-				//System.out.println("Repetition de "+caract);
 				characterAsciiSet.get(caract).incrementAndGet();
-				//System.out.println(caract+":"+characterAsciiSet.get(caract));
 			}
 			else{
 				asciiCode.add((int)caract);
-				//System.out.println("Nouvelle lettre "+caract);
 				characterAsciiSet.put(caract, new AtomicInteger(0x1));
 			}
-			//System.out.println("characterAsciiSet: "+characterAsciiSet);
 		}	
 	}
 	
@@ -194,10 +190,7 @@ public class CheckEntry {
 	    boolean interversion = true;
 	    int tabLength = occurrenceTab.length;
 	    int intermediaire = 0;
-	    
 	    initializeOccurrenceTab(occurrenceTab);
-	    
-	    //Tri a bulles
 	    while(tabLength > 0 && interversion){
 	          interversion = false;
 	         
@@ -225,8 +218,12 @@ public class CheckEntry {
 		return asciiCode;
 	}
 	
-	public static void main(String[] args){
-	    CheckEntry ck = new CheckEntry();
-	    ck.analyzeAndCountOccurrenceLetter(new String("Cortana").toCharArray());
+	public boolean heExists(String phrase, String target_word)
+	{
+		if(phrase.indexOf(target_word) != 1)
+		{
+			return true;
+		}
+		return false;
 	}
 }
