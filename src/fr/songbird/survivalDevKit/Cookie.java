@@ -38,6 +38,10 @@ public class Cookie implements Serializable{
 	
 	private String lang;
 	
+	private String[] strings;
+	
+	private String string;
+	
 	
 	//###### PUBLIC VARIABLES ######
 	
@@ -78,20 +82,6 @@ public class Cookie implements Serializable{
 	public String getCookiePath(){
 		return pathInString;
 	}
-	
-	/**
-	 * Check and creates the cookie if doesn't exits.
-	 * @return true if the serialized file is installed.
-	 */
-	public boolean heIsInstalled(){
-		File directory = new File(getCookiePath()+fileName);
-		if(!directory.exists()){
-			System.out.println("Le cookie n'existe pas.\n"
-					+"Creation du cookie...");
-			serializeCookies(new Cookie(), getPathFileSerial());
-		}
-		return true;
-	}
 	/**
 	 * 
 	 * @return path of the file serialized.
@@ -104,6 +94,11 @@ public class Cookie implements Serializable{
 		Cookie.pathFileSerial = PFS;
 	}
 	
+	/**
+	 * 
+	 * @param cookie
+	 * @param pathFileSerial
+	 */
 	public static void serializeCookies(Cookie cookie, File pathFileSerial){
 		FileOutputStream fileSerial = null;
 		ObjectOutputStream objectSerial = null;
@@ -177,5 +172,26 @@ public class Cookie implements Serializable{
 		
 		
 		return cookie;
+	}
+
+	/**
+	 * Mutateur charge d'affecter le texte qui sera serialise
+	 * @param string
+	 */
+	public void setString(String string)
+	{
+		this.string = string;
+	}
+	
+	
+	/**
+	 * Surcharge de la methode setString.
+	 * @param strings
+	 * @see {@link Cookie#setString(String)}
+	 */
+	public void setString(String...strings)
+	{
+		
+		this.strings = strings;
 	}
 }

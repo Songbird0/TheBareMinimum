@@ -2,6 +2,8 @@ package fr.songbird.survivalDevKit;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,43 +24,18 @@ public class UMServer {
 	/**
 	 * Chemin du dossier client cense etre conserve sur le serveur
 	 */
-	private  File CLIENTPATHFOLDER_SERVER;
+	private File CLIENTPATHFOLDER_SERVER;
+
 	
 	@SuppressWarnings("unchecked")
 	public UMServer()
 	{
 		
-		
-		
 	}
 	
 	
 	//###### PRIVATE METHODS ######
-	
-	/**
-	 * 
-	 * @param OS
-	 * @return le chemin adequat en fonction du systeme d'exploitation
-	 */
-	private String getAppropriateUserHome(final String OS)
-	{
-		final String OsUpperCase = (OS == null ? "nop" : OS.toUpperCase());
-		
-		if(!OsUpperCase.equals("nop"))
-		{
-			if(OsUpperCase.contains("WIN"))
-			{
-				return System.getProperty("user.home")+File.separator+"AppData"+File.separator+"Roaming"+File.separator;
-				
-			}
-			else if(OsUpperCase.contains("NUX"))
-			{
-				return System.getProperty("user.home")+File.separator;
-			}
-		}
-		
-		return System.getProperty("user.home")+File.separator;
-	}
+
 	
 	/**
 	 * Permet de creer un chemin relatif pour eviter de casser la portabilite lors du telechargement vers le client.
@@ -89,31 +66,72 @@ public class UMServer {
 	}
 	
 	
+	private void research(File[] files)
+	{
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(CLIENTPATHFOLDER_SERVER.getPath()+"arb.json");
+		} catch (IOException ioe0) {
+			ioe0.printStackTrace();
+		}
+		
+		for(File file : files)
+		{
+			if(file.isDirectory())
+			{
+				research(file.listFiles());
+			}
+			else
+			{
+				
+			}
+		}
+	}
+	
+	
 	//###### PUBLIC METHODS ######
 	
+
 	
-	public void setClientPathFolder(final String CLIENT_FOLDER)
+	public void setClientPathFolder(final String DOMAIN_NAME, String...repositories)
 	{
-		this.CLIENTPATHFOLDER_SERVER = new File(
-				
-				getAppropriateUserHome(System.getProperty("os.name"))+File.separator+CLIENT_FOLDER
-				);
+		StringBuilder builder = new StringBuilder();
+		builder.append(File.separator);
+		builder.append(repositories[0]);
+		builder.append(File.separator);
+		builder.append(repositories[1]);
+		builder.append(File.separator);
+		builder.append(repositories[2]);
+		builder.append(File.separator);
+		builder.append(DOMAIN_NAME);
+		builder.append("htdocs");
+		builder.append(File.separator);
+		builder.append("client");
+		builder.append(File.separator);
+		this.CLIENTPATHFOLDER_SERVER = new File(builder.toString());
 	}
+	
 	
 	
 	public String getMD5Sum(final File target_file) throws NoSuchAlgorithmException, IOException
 	{
-			MessageDigest md = MessageDigest.getInstance("MD5");
+			MessageDigest md = null;
+
+				md = MessageDigest.getInstance("MD5");
+
 			
-			FileInputStream fileInput = new FileInputStream(target_file);
+			FileInputStream fileInput = null;
+				fileInput = new FileInputStream(target_file);
+
 			
-			byte[] buffer = new byte[1024];
-			
-			int reading = 0;
-			while((reading = fileInput.read(buffer)) != -1)
-			{
-				md.update(buffer, 0, reading);
-			}
+				byte[] buffer = new byte[1024];
+				
+				int reading = 0;
+				while((reading = fileInput.read(buffer)) != -1)
+				{
+					md.update(buffer, 0, reading);
+				}
+
 			 byte[] md5_sumBytes = md.digest();
 			 StringBuffer strBuffer = new StringBuffer();
 			 
@@ -129,5 +147,5 @@ public class UMServer {
 			 
 			 return strBuffer.toString();
 	}
-	
+
 }

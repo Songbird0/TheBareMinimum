@@ -1,11 +1,14 @@
 package fr.songbird.survivalDevKit;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -18,7 +21,7 @@ import fr.songbird.survivalDevKit.exception.InappropriateState;
  * Systeme de mise a jour encore tres primitif, mais offrant la possibilite de gerer plus simplement ses mises a jour ainsi que la maniere de checker les majs.
  * @author songbird
  * @version 0.1.1_0-ALPHA [Major.Minor.VeryMinor_Bug-DevelopmentPhase]
- * @since 0.1.3_1-ALPHA
+ * @since 1.1.3_1-ALPHA
  */
 public class UpdateManager {
 	
@@ -28,12 +31,16 @@ public class UpdateManager {
 	private String[] repositories_resources;
 	private String currentProgram_sum;
 	private boolean checksum;
-	private final String OS_NAME = System.getProperty("os.name");
+	private static final String OS_NAME = System.getProperty("os.name");
 	private final File CLIENTPATHFOLDER_CLIENT = new File(getAppropriateUserHome(OS_NAME)+".Younicube");
-	private final File LAUNCHER_PATH_FOLDER = new File(
-			getAppropriateUserHome(OS_NAME+getAppropriateDesktop(OS_NAME))
+	public static final File LAUNCHER_PATH_FOLDER = new File(
+			getAppropriateUserHome(OS_NAME)+File.separator+getAppropriateDesktop(OS_NAME)
 			);
 	
+	public UpdateManager()
+	{
+		
+	}
 	
 	/**
 	 * This constructor allows an update with a primitive system based on version number. 
@@ -57,7 +64,6 @@ public class UpdateManager {
 	 * @param currentProgram_sum
 	 * @param repositories
 	 * @param CHECKSUM
-	 * @see {@link UpdateManager#UpdateManager(String, String[], boolean)}
 	 */
 	public UpdateManager
 	(
@@ -161,7 +167,7 @@ public class UpdateManager {
 	}
 	
 	
-	private String getAppropriateUserHome(final String OS)
+	private static String getAppropriateUserHome(final String OS)
 	{
 		final String OsUpperCase = (OS == null ? "nop" : OS.toUpperCase());
 		
@@ -181,7 +187,7 @@ public class UpdateManager {
 		return System.getProperty("user.home")+File.separator;
 	}
 	
-	private String getAppropriateDesktop(final String OS)
+	private static String getAppropriateDesktop(final String OS)
 	{
 		final String OsUpperCase = (OS == null ? "nop" : OS.toUpperCase());
 		
@@ -198,6 +204,56 @@ public class UpdateManager {
 			return "Desktop";
 		}
 		
+	}
+	
+	/**
+	 * 
+	 * @param user_version
+	 * @param compiled_version
+	 * @param POPUP_TITLE
+	 * @param POPUP_CONTENT
+	 * @return
+	 */
+	public boolean checkJavaVersion
+	(
+			final String user_version, 
+			final int compiled_version, 
+			final String POPUP_TITLE,
+			final String POPUP_CONTENT
+			
+	)
+	{
+		String intermed = user_version.substring(user_version.indexOf("1")+2, user_version.indexOf("1")+3);
+		System.out.println(intermed);
+		if(Integer.parseInt(intermed) < compiled_version)
+		{
+			int option = JOptionPane.showConfirmDialog(null, POPUP_CONTENT, POPUP_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+			if(option == JOptionPane.YES_OPTION)
+			{
+				if(Desktop.isDesktopSupported())
+				{
+					Desktop browser = Desktop.getDesktop();
+					if(browser.isSupported(Desktop.Action.BROWSE))
+					{
+						try
+						{
+							URI uri = new URI(new String("https://www.java.com/fr/download/installed.jsp"));
+							browser.browse(uri);
+						}catch(IOException ioe0)
+						{
+							ioe0.printStackTrace();
+						}catch(URISyntaxException use0)
+						{
+							use0.printStackTrace();
+						}
+					}
+					
+				}
+			}
+			return false;
+		}
+		
+		return true;
 	}
 	
 	//###### PUBLIC METHODS ######
@@ -449,9 +505,4 @@ public class UpdateManager {
 			ioe0.printStackTrace();
 		}
 	}
-	
-
-	
-	
-	
 }

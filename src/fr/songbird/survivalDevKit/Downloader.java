@@ -64,6 +64,28 @@ public class Downloader{
         exception1.printStackTrace();
       }
   }
+  
+  public Downloader(String url, String fileNameWritten, final File REPOSITORIES){
+      fnw = fileNameWritten;
+      fileDownloaded = new File(REPOSITORIES.getPath()+File.separator+fnw);
+	  logger.log(LogLevel.INFO, "Creation du fichier "+fnw);
+	  try {
+		fileDownloaded.createNewFile();
+	  } catch (IOException exception2) {
+		exception2.printStackTrace();
+	  }
+	  try {
+		fileToWrite = new FileOutputStream(fileDownloaded);
+	  } catch (FileNotFoundException exception0) {
+		exception0.printStackTrace();
+	  }
+      try{
+        racine = new URL(url);
+        getFile(racine);
+      }catch(MalformedURLException exception1){
+        exception1.printStackTrace();
+      }
+  }
 
   //###### PRIVATE METHODS ######
   
@@ -130,7 +152,5 @@ public class Downloader{
 	  }
 	  new File(positionOfRepositories).mkdirs();
 	  return positionOfRepositories;
-  }
-
- 
+  } 
 }
