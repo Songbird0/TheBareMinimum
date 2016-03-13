@@ -1,20 +1,30 @@
 package fr.songbird.survivalDevKit;
 
+import javax.swing.event.EventListenerList;
+
 import fr.songbird.survivalDevKit.exception.NullValueException;
+import fr.songbird.survivalDevKit.listeners.MeterListener;
 
 /**
  * 
  * @author songbird
- * @version 0.0.1_0-ALPHA
+ * @version 0.2.1_1-BETA
+ * @since TBM-3.5.1-1-BETA
  */
 public class Meter {
 
 	private int current_time;
+	private long current_time_long;
 	private int hour = 0,
 		minutes = 0,
 		seconds = 0;
+	private EventListenerList list = new EventListenerList();
 	
 
+	public Meter()
+	{
+		
+	}
 	/**
 	 * Le parametre du constructeur vaut: heureVoulue-1<br><br>
 	 * 
@@ -43,15 +53,36 @@ public class Meter {
 	
 	//###### PRIVATE METHODS ######
 	
-	private void setCurrentTime(int ct)
+
+	
+	
+	
+	//###### PROTECTED METHODS ######
+	
+	protected void fireWhenTick()
 	{
-		this.current_time = ct;
+		
+		for(MeterListener ml : getMeterListeners())
+		{
+			ml.whenTick(current_time);
+			ml.whenTick(current_time_long);
+		}
 	}
 	
+	
+	protected MeterListener[] getMeterListeners()
+	{
+		return list.getListeners(MeterListener.class);
+	}
 
 	
 	
 	//###### PUBLIC METHODS ######
+	
+	public void addMeterListener(MeterListener ml)
+	{
+		list.add(MeterListener.class, ml);
+	}
 	
 	public int getCurrentTime()
 	{
@@ -99,13 +130,65 @@ public class Meter {
 			}
 			StringBuilder builder = new StringBuilder();
 			builder.append(hour);
-			builder.append("h ");
+			builder.append("h");
 			builder.append(minutes);
-			builder.append("min ");
+			builder.append("m");
 			builder.append(seconds);
 			builder.append("s");
 		return builder.toString();
 	}
 	
+	public void countTick(int limit)
+	{
+		try
+		{
+			Thread.sleep(1000);
+			setCurrentTime(1);
+		}catch(InterruptedException ie)
+		{
+			ie.printStackTrace();
+		}
+		if(current_time < limit)
+		{
+			countTick(limit);
+		}
+	}
+	
+	public void countTick(long limit)
+	{
+		try
+		{
+			Thread.sleep(1000);
+			setCurrentTime(1L);
+		}catch(InterruptedException ie)
+		{
+			ie.printStackTrace();
+		}
+		if(current_time_long < limit)
+		{
+			countTick(limit);
+		}
+	}
+	
+	
+	public void setCurrentTime(long ct)
+	{
+		this.current_time_long += ct;
+		if(this.current_time_long > 5L)
+		{
+			this.current_time_long = 0;
+		}
+		fireWhenTick();
+	}
+	
+	public void setCurrentTime(int ct)
+	{
+		this.current_time += ct;
+		if(this.current_time > 5)
+		{
+			this.current_time = 0;
+		}
+		fireWhenTick();
+	}
 	
 }
